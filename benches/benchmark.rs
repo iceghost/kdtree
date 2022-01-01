@@ -27,7 +27,7 @@ fn criterion_benchmark(c: &mut Criterion) {
                     let z = rfloat(&mut rng);
                     data.push(Point::new(x, y, z));
                 }
-                let tree = data.into_iter().collect::<KdTree<_, 3>>();
+                let tree = data.into_iter().collect::<KdTree<_>>();
             });
         });
     }

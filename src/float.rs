@@ -39,6 +39,13 @@ impl Ord for Float {
     }
 }
 
+impl std::ops::Sub for Float {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Float(self.0 - rhs.0)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

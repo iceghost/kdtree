@@ -1,5 +1,7 @@
+use crate::multidimension::distances::JMeasure;
+
 use super::float::Float;
-use super::kdtree::MultiDimension;
+use super::multidimension::MultiDimension;
 
 #[derive(PartialEq)]
 pub struct Point {
@@ -18,14 +20,26 @@ impl Point {
     }
 }
 
-impl MultiDimension<3> for Point {
-    type Dimension = Float;
-    fn nth_dim(&self, n: usize) -> Self::Dimension {
-        let n = n % 3;
-        match n {
-            0 => self.x,
-            1 => self.y,
-            _ => self.z,
+impl MultiDimension for Point {
+    const DIM: usize = 3;
+}
+
+impl JMeasure for Point {
+    type Distance = Float;
+    fn j_diff(j: usize, this: &Self, that: &Self) -> Self::Distance {
+        let j = j % 3;
+        match j {
+            0 => this.x - that.x,
+            1 => this.y - that.y,
+            _ => this.z - that.z,
+        }
+    }
+    fn j_compare(j: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
+        let j = j % 3;
+        match j {
+            0 => this.x.cmp(&that.x),
+            1 => this.y.cmp(&that.y),
+            _ => this.z.cmp(&that.z),
         }
     }
 }
