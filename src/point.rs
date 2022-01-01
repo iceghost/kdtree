@@ -1,22 +1,22 @@
-use std::{cmp::Ordering, ops::Mul};
-use super::kdtree::MultiDimension;
 use super::float::Float;
-
+use super::kdtree::MultiDimension;
 
 #[derive(PartialEq)]
-struct Point {
+pub struct Point {
     x: Float,
     y: Float,
     z: Float,
 }
 
 impl Point {
-    fn new(x: f32, y: f32, z: f32) -> Self {
-        Point { x: Float::new(x), y: Float::new(y), z: Float::new(z) }
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Point {
+            x: Float::new(x),
+            y: Float::new(y),
+            z: Float::new(z),
+        }
     }
 }
-
-
 
 impl MultiDimension<3> for Point {
     type Dimension = Float;

@@ -42,7 +42,9 @@ impl Ord for Float {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
     fn equal() {
-        assert!(Float(0.1) == Float(0.11));
+        assert!(Float(0.1) == Float(0.1001));
     }
 }

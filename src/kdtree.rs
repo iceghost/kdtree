@@ -2,7 +2,7 @@
 
 /// KdTree is essentially a binary tree with k-dimensions node
 #[derive(Debug)]
-struct KdTree<T, const K: usize>
+pub struct KdTree<T, const K: usize>
 where
     T: MultiDimension<K>,
 {

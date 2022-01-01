@@ -1,3 +1,3 @@
-mod point;
-mod kdtree;
-mod float;
+pub mod point;
+pub mod kdtree;
+pub mod float;
