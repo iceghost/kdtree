@@ -1,11 +1,11 @@
 //! This KdTree implementation use `str::collections::BTreeMap` from the standard library
 
-use crate::multidimension::distances::JMeasure;
+use multi_dimension::distances::JMeasure;
 
 // mod nearest_neighbor;
 // mod bounds;
-use super::multidimension::distances;
-use super::multidimension::MultiDimension;
+use multi_dimension::distances;
+use multi_dimension::MultiDimension;
 
 /// KdTree is essentially a binary tree with k-dimensions node
 #[derive(Debug)]

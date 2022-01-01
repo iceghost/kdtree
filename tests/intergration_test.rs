@@ -1,6 +1,6 @@
-use kdtree::kdtree::KdTree;
-use kdtree::multidimension::distances::JMeasure;
-use kdtree::multidimension::MultiDimension;
+use kd_tree::KdTree;
+use multi_dimension::distances::JMeasure;
+use multi_dimension::MultiDimension;
 
 #[test]
 fn test() {

@@ -5,10 +5,12 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dev-dependencies]
-criterion = "0.3"
-rand = "0.8.4"
+[workspace]
+members = [
+    "kd-tree",
+    "multi-dimension"
+]
 
-[[bench]]
-name = "benchmark"
-harness = false
+[dependencies]
+kd-tree = { path = "./kd-tree" }
+multi-dimension = { path = "./multi-dimension" }
