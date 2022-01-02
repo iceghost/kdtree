@@ -9,6 +9,10 @@ fn test() {
 
     impl MultiDimension for Scalar {
         const DIM: usize = 1;
+
+        fn j_clone(_: usize, this: &mut Self, that: &mut Self) {
+            this.0 = that.0;
+        }
     }
 
     impl JMeasure for Scalar {
@@ -32,6 +36,14 @@ fn two_dim() {
 
     impl MultiDimension for Point {
         const DIM: usize = 2;
+
+        fn j_clone(j: usize, this: &mut Self, that: &mut Self) {
+            if j % 2 == 0 {
+                this.0 = that.0;
+            } else {
+                this.1 = that.1;
+            }
+        }
     }
     impl JMeasure for Point {
         type Distance = isize;

@@ -8,19 +8,19 @@ pub trait JMeasure: MultiDimension {
 
 pub trait DissimilarityMeasure: JMeasure {
     type Dissimilarity;
-    fn dissimilarity_measure(this: &Self, that: &Self) -> Self::Dissimilarity;
+    fn dissimilarity(this: &Self, that: &Self) -> Self::Dissimilarity;
 }
 
-pub trait Euclidian: MultiDimension + JMeasure<Distance = f32> {}
+pub trait Euclidian: JMeasure {}
 
-impl<T: Euclidian> DissimilarityMeasure for T {
-    type Dissimilarity = f32;
-    fn dissimilarity_measure(this: &Self, that: &Self) -> Self::Dissimilarity {
+impl<T: Euclidian<Distance = D>, D: From<f32> + Into<f32>> DissimilarityMeasure for T {
+    type Dissimilarity = D;
+    fn dissimilarity(this: &Self, that: &Self) -> Self::Dissimilarity {
         let mut sum = 0f32;
         for j in 0..Self::DIM {
-            let diff = JMeasure::j_diff(j, this, that);
+            let diff: f32 = JMeasure::j_diff(j, this, that).into();
             sum += diff * diff;
         }
-        sum.sqrt()
+        sum.sqrt().into()
     }
 }

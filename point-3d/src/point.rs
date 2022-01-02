@@ -1,5 +1,5 @@
-use multi_dimension::distances::JMeasure;
 use crate::float::Float;
+use multi_dimension::distances::JMeasure;
 use multi_dimension::MultiDimension;
 
 #[derive(PartialEq)]
@@ -21,6 +21,15 @@ impl Point {
 
 impl MultiDimension for Point {
     const DIM: usize = 3;
+
+    fn j_clone(j: usize, this: &mut Self, that: &mut Self) {
+        let j = j % 3;
+        match j {
+            0 => this.x = that.x,
+            1 => this.y = that.y,
+            _ => this.z = that.z,
+        }
+    }
 }
 
 impl JMeasure for Point {
