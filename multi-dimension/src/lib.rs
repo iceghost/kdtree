@@ -1,5 +1,4 @@
 pub mod distances;
+pub mod multi_dimension;
 
-pub trait MultiDimension {
-    const DIM: usize;
-}
+pub use multi_dimension::MultiDimension;

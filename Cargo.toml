@@ -8,9 +8,18 @@ edition = "2021"
 [workspace]
 members = [
     "kd-tree",
-    "multi-dimension"
+    "multi-dimension",
+    "point-3d"
 ]
 
 [dependencies]
 kd-tree = { path = "./kd-tree" }
 multi-dimension = { path = "./multi-dimension" }
+
+[dev-dependencies]
+criterion = "0.3"
+rand = "0.8.4"
+
+[[bench]]
+name = "benchmark"
+harness = false

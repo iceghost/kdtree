@@ -1,7 +1,6 @@
-use multidimension::distances::JMeasure;
-
-use super::float::Float;
-use multidimension::MultiDimension;
+use multi_dimension::distances::JMeasure;
+use crate::float::Float;
+use multi_dimension::MultiDimension;
 
 #[derive(PartialEq)]
 pub struct Point {
