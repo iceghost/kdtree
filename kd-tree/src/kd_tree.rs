@@ -1,7 +1,5 @@
 //! This KdTree implementation use `str::collections::BTreeMap` from the standard library
 
-use multi_dimension::distances::JMeasure;
-
 // mod nearest_neighbor;
 // mod bounds;
 use multi_dimension::MultiDimension;
@@ -31,7 +29,7 @@ type Link<T> = Option<Box<Node<T>>>;
 ///
 impl<T> Node<T>
 where
-    T: MultiDimension + JMeasure
+    T: MultiDimension
 {
     fn from_iter_help<I>(iter: I, depth: usize) -> Link<T>
     where
@@ -42,7 +40,7 @@ where
             return None;
         }
 
-        vec.sort_unstable_by(|a, b| JMeasure::j_compare(depth % T::DIM, a, b));
+        vec.sort_unstable_by(|a, b| T::j_compare(depth % T::DIM, a, b));
 
         // if length == 0, there shouldn't be any median:
         let mid = (vec.len() - 1) / 2;
@@ -70,7 +68,7 @@ where
 ///
 impl<T> FromIterator<T> for KdTree<T>
 where
-    T: JMeasure
+    T: MultiDimension
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         KdTree {

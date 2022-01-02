@@ -1,5 +1,4 @@
 use kd_tree::KdTree;
-use multi_dimension::distances::JMeasure;
 use multi_dimension::MultiDimension;
 
 #[test]
@@ -10,20 +9,15 @@ fn test() {
     impl MultiDimension for Scalar {
         const DIM: usize = 1;
 
-        fn j_clone(_: usize, this: &mut Self, that: &mut Self) {
+        fn j_clone(_: usize, this: &mut Self, that: &Self) {
             this.0 = that.0;
         }
-    }
 
-    impl JMeasure for Scalar {
-        type Distance = isize;
-        fn j_diff(_: usize, this: &Self, that: &Self) -> Self::Distance {
-            this.0 - that.0
-        }
         fn j_compare(_: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
             this.0.cmp(&that.0)
         }
     }
+
     let nodes = [0, 1, 2, 3, 4, 5];
     let tree = nodes.into_iter().map(Scalar).collect::<KdTree<Scalar>>();
     println!("{:?}", tree);
@@ -37,23 +31,14 @@ fn two_dim() {
     impl MultiDimension for Point {
         const DIM: usize = 2;
 
-        fn j_clone(j: usize, this: &mut Self, that: &mut Self) {
+        fn j_clone(j: usize, this: &mut Self, that: &Self) {
             if j % 2 == 0 {
                 this.0 = that.0;
             } else {
                 this.1 = that.1;
             }
         }
-    }
-    impl JMeasure for Point {
-        type Distance = isize;
-        fn j_diff(j: usize, this: &Self, that: &Self) -> Self::Distance {
-            if j % 2 == 0 {
-                this.0 - that.0
-            } else {
-                this.1 - that.1
-            }
-        }
+
         fn j_compare(j: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
             if j % 2 == 0 {
                 this.0.cmp(&that.0)
