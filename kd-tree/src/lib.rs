@@ -1,4 +1,4 @@
-pub mod kd_tree;
+mod kd_tree;
 mod bounds;
 
-pub use kd_tree::*;
+pub use kd_tree::KdTree;

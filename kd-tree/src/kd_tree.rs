@@ -6,25 +6,19 @@ use multi_dimension::MultiDimension;
 
 /// KdTree is essentially a binary tree with k-dimensions node
 #[derive(Debug)]
-pub struct KdTree<T>
-where
-    T: MultiDimension,
-{
+pub struct KdTree<T>{
     root: Link<T>,
 }
 
 #[derive(Debug)]
-struct Node<T>
-where
-    T: MultiDimension,
-{
+pub struct Node<T> {
     value: T,
     left: Link<T>,
     right: Link<T>,
     depth: usize,
 }
 
-type Link<T> = Option<Box<Node<T>>>;
+pub type Link<T> = Option<Box<Node<T>>>;
 
 ///
 impl<T> Node<T>
@@ -85,3 +79,10 @@ where
 
 //     }
 // }
+
+impl<T> std::ops::Deref for Node<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}

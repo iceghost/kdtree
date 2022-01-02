@@ -1,30 +1,41 @@
+use crate::kd_tree::Link;
+use multi_dimension::{distances::DissimilarityMeasure, MultiDimension};
 use std::cmp::Ordering;
 
-use multi_dimension::{MultiDimension, distances::DissimilarityMeasure};
-
-struct Bounds<T> {
-    upper: T,
-    lower: T,
+struct Bounds<'a, T> {
+    upper: Vec<&'a Link<T>>,
+    lower: Vec<&'a Link<T>>,
 }
 
-impl<T, O> Bounds<T>
+type Bound<'a, T> = Vec<&'a Link<T>>;
+
+impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
     O: Ord,
 {
     fn contain_ball(&self, center: &T, radius: &T::Output) -> bool {
         for j in 0..T::DIM {
-            let upper_distance = T::j_distance(j, center, &self.upper);
-            let lower_distance = T::j_distance(j, center, &self.lower);
-            if upper_distance <= *radius || lower_distance <= *radius {
+            let out_upper = Self::out_of_bound(&self.upper, j, center, radius);
+            let out_lower = Self::out_of_bound(&self.lower, j, center, radius);
+            if out_upper || out_lower {
                 return false;
             }
         }
         true
     }
+
+    fn out_of_bound(bound: &Bound<'a, T>, j: usize, center: &T, radius: &O) -> bool {
+        let out_upper = if let Some(node) = bound[j] {
+            T::j_distance(j, center, node) <= *radius
+        } else {
+            false
+        };
+        out_upper
+    }
 }
 
-impl<T, O> Bounds<T>
+impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
     O: Ord + std::ops::AddAssign + Default,
@@ -32,17 +43,29 @@ where
     fn overlap_ball(&self, center: &T, radius: &T::Output) -> bool {
         let mut sum = O::default();
         for j in 0..T::DIM {
-            if T::j_compare(j, center, &self.lower) == Ordering::Less {
-                // lower than boundary
-                sum += T::j_distance(j, center, &self.lower);
-                if T::dissimilarity(&sum) > *radius {
-                    return false;
-                }
-            } else if T::j_compare(j, center, &self.upper) == Ordering::Greater {
-                // higher than boundary
-                sum += T::j_distance(j, center, &self.upper);
-                if T::dissimilarity(&sum) > *radius {
-                    return false;
+            enum Three {
+                EarlyReturn,
+                AtLeastITried,
+                DidntTry,
+            }
+            let mut func = |bound: &Bound<_>, ordering: Ordering| {
+                if let Some(node) = bound[j] {
+                    if T::j_compare(j, center, node) == ordering {
+                        // higher than boundary
+                        sum += T::j_distance(j, center, node);
+                        if T::dissimilarity(&sum) > *radius {
+                            return Three::EarlyReturn;
+                        }
+                        return Three::AtLeastITried;
+                    }
+                };
+                Three::DidntTry
+            };
+            match func(&self.lower, Ordering::Less) {
+                Three::EarlyReturn => return false,
+                Three::AtLeastITried => continue,
+                Three::DidntTry => {
+                    func(&self.upper, Ordering::Greater);
                 }
             }
         }
@@ -55,7 +78,5 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test() {
-
-    }
+    fn test() {}
 }
