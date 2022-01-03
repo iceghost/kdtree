@@ -1,8 +1,3 @@
-use multi_dimension::{
-    distances::{dissimilarity_between, DissimilarityMeasure},
-    MultiDimension,
-};
-
 /// This is implemented as a custom max heap
 pub struct DissimilarityQueue<T> {
     capacity: usize,
@@ -103,6 +98,7 @@ where
     }
 }
 
+#[cfg(test)]
 impl<T> DissimilarityQueue<T>
 where
     T: PartialEq,

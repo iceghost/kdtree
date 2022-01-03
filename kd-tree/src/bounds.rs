@@ -81,16 +81,3 @@ where
         true
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test() {
-        let lower = (0isize, 0isize);
-        let upper = (5isize, 5isize);
-        // let bounds = Bounds::new();
-        // bounds.upper.fill(upper);
-    }
-}

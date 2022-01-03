@@ -144,3 +144,9 @@ impl<T, O: PartialOrd> PartialOrd for Neighbor<T, O> {
         O::partial_cmp(&self.1, &other.1)
     }
 }
+
+impl<T, O: PartialOrd> From<(T, O)> for Neighbor<T, O> {
+    fn from(x: (T, O)) -> Self {
+        Neighbor(x.0, x.1)
+    }
+}
