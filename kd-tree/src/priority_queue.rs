@@ -104,37 +104,17 @@ mod tests {
 
     #[test]
     fn test() {
-        #[derive(PartialEq, Eq, PartialOrd, Ord)]
-        struct Int(isize);
-
-        impl MultiDimension for Int {
-            const DIM: usize = 1;
-            fn j_compare(_: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
-                isize::cmp(&this.0, &that.0)
-            }
-        }
-
-        impl DissimilarityMeasure for Int {
-            type Output = isize;
-            fn j_distance(_: usize, this: &Self, that: &Self) -> Self::Output {
-                (this.0 - that.0).abs()
-            }
-            fn dissimilarity(sum: &Self::Output) -> Self::Output {
-                *sum
-            }
-        }
-
-        let mut queue = DissimilarityQueue::<Int>::with_capacity(3, Int(0));
-        queue.push(Int(5));
-        queue.push(Int(3));
-        queue.push(Int(1));
-        assert!(queue.contains(&Int(5)));
-        queue.push(Int(-10));
-        assert!(!queue.contains(&Int(-10)));
-        assert!(queue.contains(&Int(1)));
-        queue.push(Int(2));
-        assert!(!queue.contains(&Int(5)));
-        queue.push(Int(4));
-        assert!(!queue.contains(&Int(4)));
+        let mut queue = DissimilarityQueue::<isize>::with_capacity(3, 0);
+        queue.push(5);
+        queue.push(3);
+        queue.push(1);
+        assert!(queue.contains(&5));
+        queue.push(-10);
+        assert!(!queue.contains(&-10));
+        assert!(queue.contains(&1));
+        queue.push(2);
+        assert!(!queue.contains(&5));
+        queue.push(4);
+        assert!(!queue.contains(&4));
     }
 }

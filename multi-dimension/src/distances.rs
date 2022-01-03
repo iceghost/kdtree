@@ -17,3 +17,40 @@ where
     }
     T::dissimilarity(&sum)
 }
+
+macro_rules! dimension_1 {
+    ($type:ty) => {
+        impl DissimilarityMeasure for $type {
+            type Output = $type;
+            fn j_distance(_: usize, this: &Self, that: &Self) -> Self::Output {
+                (this - that).abs()
+            }
+            fn dissimilarity(sum: &Self::Output) -> Self::Output {
+                *sum
+            }
+        }
+    };
+}
+
+macro_rules! dimension_2 {
+    ($type:ty) => {
+        impl DissimilarityMeasure for ($type, $type) {
+            type Output = f64;
+            fn j_distance(j: usize, this: &Self, that: &Self) -> Self::Output {
+                if j % 2 == 0 {
+                    let diff = this.0 - that.0;
+                    (diff * diff) as f64
+                } else {
+                    let diff = this.1 - that.1;
+                    (diff * diff) as f64
+                }
+            }
+            fn dissimilarity(sum: &Self::Output) -> Self::Output {
+                sum.sqrt()
+            }
+        }
+    };
+}
+
+dimension_1!(isize);
+dimension_2!(isize);

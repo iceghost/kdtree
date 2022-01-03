@@ -7,14 +7,14 @@ pub struct Bounds<'a, T> {
     pub lower: Vec<&'a Link<T>>,
 }
 
-pub type Bound<'a, T> = Vec<&'a Link<T>>;
+type Bound<'a, T> = Vec<&'a Link<T>>;
 
 impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
     O: Ord,
 {
-    fn contain_ball(&self, center: &T, radius: &T::Output) -> bool {
+    pub fn contain_ball(&self, center: &T, radius: &T::Output) -> bool {
         for j in 0..T::DIM {
             let out_upper = Self::out_of_bound(&self.upper, j, center, radius);
             let out_lower = Self::out_of_bound(&self.lower, j, center, radius);
@@ -40,7 +40,7 @@ where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
     O: Ord + std::ops::AddAssign + Default,
 {
-    fn overlap_ball(&self, center: &T, radius: &T::Output) -> bool {
+    pub fn overlap_ball(&self, center: &T, radius: &T::Output) -> bool {
         let mut sum = O::default();
         for j in 0..T::DIM {
             enum Three {

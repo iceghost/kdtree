@@ -3,4 +3,4 @@ mod bounds;
 mod nearest_neighbor;
 mod priority_queue;
 
-pub use kd_tree::KdTree;
+pub use crate::kd_tree::KdTree;
