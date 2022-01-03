@@ -9,10 +9,6 @@ fn test() {
     impl MultiDimension for Scalar {
         const DIM: usize = 1;
 
-        fn j_clone(_: usize, this: &mut Self, that: &Self) {
-            this.0 = that.0;
-        }
-
         fn j_compare(_: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
             this.0.cmp(&that.0)
         }
@@ -30,14 +26,6 @@ fn two_dim() {
 
     impl MultiDimension for Point {
         const DIM: usize = 2;
-
-        fn j_clone(j: usize, this: &mut Self, that: &Self) {
-            if j % 2 == 0 {
-                this.0 = that.0;
-            } else {
-                this.1 = that.1;
-            }
-        }
 
         fn j_compare(j: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
             if j % 2 == 0 {

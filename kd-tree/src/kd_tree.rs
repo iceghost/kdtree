@@ -13,8 +13,8 @@ pub struct KdTree<T>{
 #[derive(Debug)]
 pub struct Node<T> {
     value: T,
-    left: Link<T>,
-    right: Link<T>,
+    pub left: Link<T>,
+    pub right: Link<T>,
     depth: usize,
 }
 

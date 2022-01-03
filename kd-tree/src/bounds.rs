@@ -2,12 +2,12 @@ use crate::kd_tree::Link;
 use multi_dimension::{distances::DissimilarityMeasure, MultiDimension};
 use std::cmp::Ordering;
 
-struct Bounds<'a, T> {
-    upper: Vec<&'a Link<T>>,
-    lower: Vec<&'a Link<T>>,
+pub struct Bounds<'a, T> {
+    pub upper: Vec<&'a Link<T>>,
+    pub lower: Vec<&'a Link<T>>,
 }
 
-type Bound<'a, T> = Vec<&'a Link<T>>;
+pub type Bound<'a, T> = Vec<&'a Link<T>>;
 
 impl<'a, T, O> Bounds<'a, T>
 where

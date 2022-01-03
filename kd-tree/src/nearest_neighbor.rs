@@ -1,33 +1,32 @@
-use super::{KdTree, MultiDimension, Link};
+use std::cmp::Ordering;
 
-use super::bounds;
+use multi_dimension::MultiDimension;
 
-struct Searcher<T, D, const K: usize>
-where
-    T: MultiDimension<K, Dimension = D>,
-    D: Ord,
-{
+use super::kd_tree::{KdTree, Link};
+
+use super::bounds::Bounds;
+
+struct Searcher<'a, T> {
     searchee: T,
-    data: KdTree<T, K>,
-    upper_bound: T,
-    lower_bound: T,
+    bounds: Bounds<'a, T>
 }
 
-impl<T, D, const K: usize> Searcher<T, D, K>
+impl<'a, T> Searcher<'a, T>
 where
-    T: MultiDimension<K, Dimension = D>,
-    D: Ord,
+    T: MultiDimension,
 {
-    fn search<'a>(&mut self, link: &'a Link<T, K>)
-    {
-        let node = link.as_ref()?;
+    // fn search(&mut self, link: &'a Link<T>) -> Option<&'a Link<T>>
+    // {
+    //     let node = link.as_ref()?;
 
-        if node.partition_dim() < self.searchee.nth_dim(node.depth % K) {
-            self.search(&node.left);
-        } else {
-            self.search(&node.right);
-        }
-        None
-    }
+    //     if node.left.is_none() && node.right.is_none() {
+    //         // update priority queue
+    //         if bounds::contain_ball(&self, center, radius)
+    //     }
+
+    //     if T::j_compare(j, searchee, node) != Ordering::Greater {
+
+    //     }
+    // }
 
 }
