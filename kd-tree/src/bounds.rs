@@ -21,7 +21,7 @@ impl<'a, T: MultiDimension> Bounds<'a, T> {
 impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
-    O: Ord,
+    O: PartialOrd,
 {
     pub fn contain_ball(&self, center: &T, radius: &T::Output) -> bool {
         for j in 0..T::DIM {
@@ -36,7 +36,7 @@ where
 
     fn out_of_bound(bound: &Bound<'a, T>, j: usize, center: &T, radius: &O) -> bool {
         let out_upper = if let Some(node) = bound[j] {
-            T::j_distance(j, center, node) <= *radius
+            T::dissimilarity(&T::j_distance(j, center, node)) <= *radius
         } else {
             false
         };
@@ -47,7 +47,7 @@ where
 impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
-    O: Ord + std::ops::AddAssign + Default,
+    O: PartialOrd + std::ops::AddAssign + Default,
 {
     pub fn overlap_ball(&self, center: &T, radius: &T::Output) -> bool {
         let mut sum = O::default();
@@ -87,5 +87,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test() {}
+    fn test() {
+        let lower = (0isize, 0isize);
+        let upper = (5isize, 5isize);
+        // let bounds = Bounds::new();
+        // bounds.upper.fill(upper);
+    }
 }

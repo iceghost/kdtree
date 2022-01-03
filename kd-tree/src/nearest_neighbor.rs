@@ -1,19 +1,18 @@
 use std::cmp::Ordering;
-use std::ops::RangeBounds;
 
 use multi_dimension::distances::{dissimilarity_between, DissimilarityMeasure};
 use multi_dimension::MultiDimension;
 
-use crate::priority_queue::{DissimilarityQueue, self};
+use crate::priority_queue::DissimilarityQueue;
 
-use super::kd_tree::{KdTree, Link};
+use super::kd_tree::Link;
 
 use super::bounds::Bounds;
 
-struct Searcher<'a, T>
+pub struct Searcher<'a, T>
 where
     T: DissimilarityMeasure,
-    T::Output: Ord,
+    T::Output: PartialOrd,
 {
     searchee: T,
     dissimilarity_queue: DissimilarityQueue<Neighbor<&'a T, T::Output>>,
@@ -24,9 +23,9 @@ where
 impl<'a, T> Searcher<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure,
-    T::Output: Default + std::ops::AddAssign + Ord,
+    T::Output: Default + std::ops::AddAssign + PartialOrd,
 {
-    fn new(searchee: T, capacity: usize) -> Self {
+    pub fn new(searchee: T, capacity: usize) -> Self {
         Self {
             searchee,
             dissimilarity_queue: DissimilarityQueue::with_capacity(capacity),
@@ -35,7 +34,7 @@ where
         }
     }
 
-    fn search(&mut self, link: &'a Link<T>, j: usize) {
+    pub fn search(&mut self, link: &'a Link<T>, j: usize) {
         let node = if let Some(node) = link {
             node
         } else {
@@ -82,39 +81,66 @@ where
         if T::j_compare(j, &self.searchee, &node) != Ordering::Greater {
             let temp = self.bounds.lower[j];
             self.bounds.lower[j] = link;
-            if self.bounds.overlap_ball(&self.searchee, &self.dissimilarity_queue.peek().unwrap().1) {
+            if self.dissimilarity_queue.empty()
+                || self.bounds.overlap_ball(
+                    &self.searchee,
+                    &self
+                        .dissimilarity_queue
+                        .peek()
+                        .expect("can't pop empty queue")
+                        .1,
+                )
+            {
                 self.search(&node.right, (j + 1) % T::DIM);
             }
             self.bounds.lower[j] = temp;
         } else {
             let temp = self.bounds.upper[j];
             self.bounds.upper[j] = link;
-            if self.bounds.overlap_ball(&self.searchee, &self.dissimilarity_queue.peek().unwrap().1) {
+            if self.dissimilarity_queue.empty()
+                || self.bounds.overlap_ball(
+                    &self.searchee,
+                    &self
+                        .dissimilarity_queue
+                        .peek()
+                        .expect("can't pop empty queue")
+                        .1,
+                )
+            {
                 self.search(&node.left, (j + 1) % T::DIM);
             }
             self.bounds.upper[j] = temp;
         }
-        if self.bounds.contain_ball(&self.searchee, &self.dissimilarity_queue.peek().unwrap().1) {
+
+        self.dissimilarity_queue.push(Neighbor(
+            &***node,
+            dissimilarity_between(&self.searchee, &node),
+        ));
+
+        if self.dissimilarity_queue.full()
+            && self
+                .bounds
+                .contain_ball(&self.searchee, &self.dissimilarity_queue.peek().unwrap().1)
+        {
             self.at_best = true;
         }
     }
+
+    pub fn finalize(self) -> impl Iterator<Item = Neighbor<&'a T, T::Output>> {
+        self.dissimilarity_queue.into_iter()
+    }
 }
 
-struct Neighbor<T, O: Ord>(pub T, pub O);
+#[derive(Debug)]
+pub struct Neighbor<T, O: PartialOrd>(pub T, pub O);
 
-impl<T, O: Ord> PartialEq for Neighbor<T, O> {
+impl<T, O: PartialOrd> PartialEq for Neighbor<T, O> {
     fn eq(&self, other: &Self) -> bool {
         O::eq(&self.1, &other.1)
     }
 }
-impl<T, O: Ord> Eq for Neighbor<T, O> {}
-impl<T, O: Ord> PartialOrd for Neighbor<T, O> {
+impl<T, O: PartialOrd> PartialOrd for Neighbor<T, O> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         O::partial_cmp(&self.1, &other.1)
-    }
-}
-impl<T, O: Ord> Ord for Neighbor<T, O> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        O::cmp(&self.1, &other.1)
     }
 }

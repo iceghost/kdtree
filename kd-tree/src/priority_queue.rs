@@ -11,7 +11,7 @@ pub struct DissimilarityQueue<T> {
 
 impl<T> DissimilarityQueue<T>
 where
-    T: Ord,
+    T: PartialOrd,
 {
     pub fn with_capacity(capacity: usize) -> Self {
         Self {
@@ -97,14 +97,27 @@ where
     pub fn full(&self) -> bool {
         self.capacity == self.data.len()
     }
+
+    pub fn empty(&self) -> bool {
+        self.data.len() == 0
+    }
 }
 
 impl<T> DissimilarityQueue<T>
 where
-    T: Eq,
+    T: PartialEq,
 {
     pub fn contains(&self, element: &T) -> bool {
         self.data.contains(element)
+    }
+}
+
+impl<T> IntoIterator for DissimilarityQueue<T> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.data.into_iter()
     }
 }
 
@@ -114,7 +127,7 @@ mod tests {
 
     #[test]
     fn test() {
-        #[derive(PartialEq, Eq, Ord)]
+        #[derive(PartialEq)]
         struct Modulus(isize);
         impl Into<Modulus> for isize {
             fn into(self) -> Modulus {

@@ -1,12 +1,16 @@
 //! This KdTree implementation use `str::collections::BTreeMap` from the standard library
 
+use std::ops::AddAssign;
+
+use crate::nearest_neighbor::{Neighbor, Searcher};
+
 // mod nearest_neighbor;
 // mod bounds;
-use multi_dimension::MultiDimension;
+use multi_dimension::{distances::DissimilarityMeasure, MultiDimension};
 
 /// KdTree is essentially a binary tree with k-dimensions node
 #[derive(Debug)]
-pub struct KdTree<T>{
+pub struct KdTree<T> {
     root: Link<T>,
 }
 
@@ -23,7 +27,7 @@ pub type Link<T> = Option<Box<Node<T>>>;
 ///
 impl<T> Node<T>
 where
-    T: MultiDimension
+    T: MultiDimension,
 {
     fn from_iter_help<I>(iter: I, depth: usize) -> Link<T>
     where
@@ -62,7 +66,7 @@ where
 ///
 impl<T> FromIterator<T> for KdTree<T>
 where
-    T: MultiDimension
+    T: MultiDimension,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         KdTree {
@@ -71,14 +75,21 @@ where
     }
 }
 
-// impl<T, const K: usize> KdTree<T, K>
-// where
-//     T: MultiDimension<K> + DistanceBetween,
-// {
-//     fn search_nearest_neighbor() {
-
-//     }
-// }
+impl<T> KdTree<T>
+where
+    T: MultiDimension + DissimilarityMeasure,
+    T::Output: PartialOrd + AddAssign + Default,
+{
+    pub fn k_nearest_neighbor(
+        &self,
+        searchee: T,
+        k: usize,
+    ) -> impl Iterator<Item = Neighbor<&T, T::Output>> {
+        let mut searcher = Searcher::new(searchee, k);
+        searcher.search(&self.root, 0);
+        searcher.finalize()
+    }
+}
 
 impl<T> std::ops::Deref for Node<T> {
     type Target = T;

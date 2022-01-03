@@ -21,25 +21,9 @@ fn test() {
 
 #[test]
 fn two_dim() {
-    #[derive(Debug)]
-    struct Point(isize, isize);
-
-    impl MultiDimension for Point {
-        const DIM: usize = 2;
-
-        fn j_compare(j: usize, this: &Self, that: &Self) -> std::cmp::Ordering {
-            if j % 2 == 0 {
-                this.0.cmp(&that.0)
-            } else {
-                this.1.cmp(&that.1)
-            }
-        }
-    }
-
     let nodes = [(40, 45), (70, 10), (15, 70), (69, 50), (66, 85), (85, 90)] as [(isize, isize); 6];
-    let tree = nodes
-        .into_iter()
-        .map(|(a, b)| Point(a, b))
-        .collect::<KdTree<_>>();
-    println!("{:?}", tree);
+    let tree = nodes.into_iter().collect::<KdTree<_>>();
+    let it = tree.k_nearest_neighbor((40, 20), 2);
+    let result = it.collect::<Vec<_>>();
+    println!("{:?}", result);
 }
