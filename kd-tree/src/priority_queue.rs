@@ -7,41 +7,38 @@ use multi_dimension::{
 pub struct DissimilarityQueue<T> {
     capacity: usize,
     data: Vec<T>,
-    searchee: T,
 }
 
-impl<T, O> DissimilarityQueue<T>
+impl<T> DissimilarityQueue<T>
 where
-    T: MultiDimension + DissimilarityMeasure<Output = O> + Eq,
-    O: Default + std::ops::AddAssign + Ord,
+    T: Ord,
 {
-    fn dissimilarity(&self, element: &T) -> T::Output {
-        dissimilarity_between(element, &self.searchee)
-    }
-
-    pub fn with_capacity(capacity: usize, searchee: T) -> Self {
+    pub fn with_capacity(capacity: usize) -> Self {
         Self {
             capacity,
-            searchee,
             data: Vec::with_capacity(capacity),
         }
     }
 
-    pub fn push(&mut self, element: T) {
+    pub fn peek(&self) -> Option<&T> {
+        self.data.get(0)
+    }
+
+    pub fn push(&mut self, element: T) -> bool {
         if self.data.len() < self.capacity {
             self.data.push(element);
             self.sift_up();
+            true
         }
         // if it is better than the worst
-        else if self.dissimilarity(&element) < self.dissimilarity(&self.data[0]) {
+        else if element < self.data[0] {
             self.pop();
             self.data.push(element);
             self.sift_up();
+            true
+        } else {
+            false
         }
-    }
-
-    pub fn contains(&self, element: &T) -> bool {
-        self.data.contains(element)
     }
 
     fn pop(&mut self) {
@@ -59,7 +56,7 @@ where
         let mut index = self.data.len() - 1;
         while index != 0 {
             let daddy = (index - 1) / 2;
-            if self.dissimilarity(&self.data[index]) > self.dissimilarity(&self.data[daddy]) {
+            if self.data[index] > self.data[daddy] {
                 self.data.swap(index, daddy);
                 index = daddy;
             } else {
@@ -82,19 +79,32 @@ where
             let child = if child2 >= self.data.len() {
                 child1
             } else {
-                if self.dissimilarity(&self.data[child1]) > self.dissimilarity(&self.data[child2]) {
+                if self.data[child1] > self.data[child2] {
                     child1
                 } else {
                     child2
                 }
             };
-            if self.dissimilarity(&self.data[index]) < self.dissimilarity(&self.data[child]) {
+            if self.data[index] < self.data[child] {
                 self.data.swap(index, child);
                 index = child;
             } else {
                 return;
             }
         }
+    }
+
+    pub fn full(&self) -> bool {
+        self.capacity == self.data.len()
+    }
+}
+
+impl<T> DissimilarityQueue<T>
+where
+    T: Eq,
+{
+    pub fn contains(&self, element: &T) -> bool {
+        self.data.contains(element)
     }
 }
 
@@ -104,17 +114,29 @@ mod tests {
 
     #[test]
     fn test() {
-        let mut queue = DissimilarityQueue::<isize>::with_capacity(3, 0);
-        queue.push(5);
-        queue.push(3);
-        queue.push(1);
-        assert!(queue.contains(&5));
-        queue.push(-10);
-        assert!(!queue.contains(&-10));
-        assert!(queue.contains(&1));
-        queue.push(2);
-        assert!(!queue.contains(&5));
-        queue.push(4);
-        assert!(!queue.contains(&4));
+        #[derive(PartialEq, Eq, Ord)]
+        struct Modulus(isize);
+        impl Into<Modulus> for isize {
+            fn into(self) -> Modulus {
+                Modulus(self)
+            }
+        }
+        impl PartialOrd for Modulus {
+            fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+                isize::partial_cmp(&self.0.abs(), &other.0.abs())
+            }
+        }
+        let mut queue = DissimilarityQueue::<Modulus>::with_capacity(3);
+        queue.push(5.into());
+        queue.push(3.into());
+        queue.push(1.into());
+        assert!(queue.contains(&5.into()));
+        queue.push((-10).into());
+        assert!(!queue.contains(&(-10).into()));
+        assert!(queue.contains(&1.into()));
+        queue.push(2.into());
+        assert!(!queue.contains(&5.into()));
+        queue.push(4.into());
+        assert!(!queue.contains(&4.into()));
     }
 }

@@ -9,6 +9,15 @@ pub struct Bounds<'a, T> {
 
 type Bound<'a, T> = Vec<&'a Link<T>>;
 
+impl<'a, T: MultiDimension> Bounds<'a, T> {
+    pub fn new() -> Self {
+        Self {
+            upper: vec![&None; T::DIM],
+            lower: vec![&None; T::DIM],
+        }
+    }
+}
+
 impl<'a, T, O> Bounds<'a, T>
 where
     T: MultiDimension + DissimilarityMeasure<Output = O>,
