@@ -1,7 +1,7 @@
 use crate::float::Float;
-use multi_dimension::{MultiDimension, distances::DissimilarityMeasure};
+use multi_dimension::{distances::DissimilarityMeasure, MultiDimension};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Point {
     x: Float,
     y: Float,
@@ -14,6 +14,24 @@ impl Point {
             x: Float::new(x),
             y: Float::new(y),
             z: Float::new(z),
+        }
+    }
+
+    pub fn dot(&self, other: &Self) -> Float {
+        self.x * other.x + self.y * other.y + self.z * other.z
+    }
+
+    pub fn magnitude(&self) -> Float {
+        Float::new((self.x * self.x + self.y * self.y + self.z * self.z).sqrt())
+    }
+}
+
+impl From<[Float; 3]> for Point {
+    fn from(arr: [Float; 3]) -> Self {
+        Self {
+            x: arr[0],
+            y: arr[1],
+            z: arr[2],
         }
     }
 }

@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rand = "*"
+itertools = "*"
+kd-tree = { path = "../kd-tree" }
+point-3d = { path = "../point-3d" }
+multi-dimension = { path = "../multi-dimension" }

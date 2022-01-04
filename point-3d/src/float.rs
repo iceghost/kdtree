@@ -1,6 +1,7 @@
 //! Our custom float with accuracy of 0.001
 
 use std::cmp::Ordering;
+use std::ops::{Add, AddAssign, Sub, Mul, Div, Deref};
 
 const ACCURACY: f32 = 0.001;
 
@@ -39,23 +40,44 @@ impl Ord for Float {
     }
 }
 
-impl std::ops::Sub for Float {
+impl Add for Float {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Float(self.0 + rhs.0)
+    }
+}
+
+impl Sub for Float {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Float(self.0 - rhs.0)
     }
 }
 
-impl std::ops::Mul for Float {
+impl Mul for Float {
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         Float(self.0 * rhs.0)
     }
 }
 
-impl std::ops::AddAssign for Float {
+impl Div for Float {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        Float(self.0 / rhs.0)
+    }
+}
+
+impl AddAssign for Float {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
+    }
+}
+
+impl Deref for Float {
+    type Target = f32;
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

@@ -9,13 +9,15 @@ edition = "2021"
 members = [
     "kd-tree",
     "multi-dimension",
-    "point-3d"
+    "point-3d",
+    "lsh",
 ]
 
 [dependencies]
 kd-tree = { path = "./kd-tree" }
 multi-dimension = { path = "./multi-dimension" }
 point-3d = { path = "./point-3d" }
+lsh = { path = "./lsh" }
 
 [dev-dependencies]
 criterion = "0.3"
