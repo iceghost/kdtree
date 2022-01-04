@@ -15,6 +15,7 @@ members = [
 [dependencies]
 kd-tree = { path = "./kd-tree" }
 multi-dimension = { path = "./multi-dimension" }
+point-3d = { path = "./point-3d" }
 
 [dev-dependencies]
 criterion = "0.3"

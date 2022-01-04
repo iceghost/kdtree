@@ -247,6 +247,7 @@ dependencies = [
  "criterion",
  "kd-tree",
  "multi-dimension",
+ "point-3d",
  "rand",
 ]
 

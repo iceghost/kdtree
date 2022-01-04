@@ -1,5 +1,3 @@
-//! This KdTree implementation use `str::collections::BTreeMap` from the standard library
-
 use std::ops::AddAssign;
 
 use crate::nearest_neighbor::{Neighbor, Searcher};
@@ -87,6 +85,7 @@ where
     ) -> impl Iterator<Item = Neighbor<&T, T::Output>> {
         let mut searcher = Searcher::new(searchee, k);
         searcher.search(&self.root, 0);
+        // println!("{:?}", searcher.visited_count);
         searcher.finalize()
     }
 }

@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 
 const ACCURACY: f32 = 0.001;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct Float(f32);
 
 impl Float {
@@ -43,6 +43,25 @@ impl std::ops::Sub for Float {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Float(self.0 - rhs.0)
+    }
+}
+
+impl std::ops::Mul for Float {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Float(self.0 * rhs.0)
+    }
+}
+
+impl std::ops::AddAssign for Float {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0;
+    }
+}
+
+impl std::fmt::Debug for Float {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
     }
 }
 

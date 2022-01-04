@@ -1,7 +1,7 @@
 use crate::float::Float;
-use multi_dimension::MultiDimension;
+use multi_dimension::{MultiDimension, distances::DissimilarityMeasure};
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Point {
     x: Float,
     y: Float,
@@ -28,5 +28,23 @@ impl MultiDimension for Point {
             1 => this.y.cmp(&that.y),
             _ => this.z.cmp(&that.z),
         }
+    }
+}
+
+impl DissimilarityMeasure for Point {
+    type Output = Float;
+
+    fn j_distance(j: usize, this: &Self, that: &Self) -> Self::Output {
+        let j = j % 3;
+        let diff = match j {
+            0 => this.x - that.x,
+            1 => this.y - that.y,
+            _ => this.z - that.z,
+        };
+        diff * diff
+    }
+
+    fn dissimilarity(sum: &Self::Output) -> Self::Output {
+        *sum
     }
 }

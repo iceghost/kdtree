@@ -18,6 +18,7 @@ where
     dissimilarity_queue: DissimilarityQueue<Neighbor<&'a T, T::Output>>,
     bounds: Bounds<'a, T>,
     at_best: bool,
+    pub visited_count: usize,
 }
 
 impl<'a, T> Searcher<'a, T>
@@ -31,6 +32,7 @@ where
             dissimilarity_queue: DissimilarityQueue::with_capacity(capacity),
             bounds: Bounds::new(),
             at_best: false,
+            visited_count: 0
         }
     }
 
@@ -40,6 +42,8 @@ where
         } else {
             return ();
         };
+
+        self.visited_count += 1;
 
         // terminal node
         if node.left.is_none() && node.right.is_none() {

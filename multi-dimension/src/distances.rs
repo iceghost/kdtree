@@ -35,18 +35,18 @@ macro_rules! dimension_1 {
 macro_rules! dimension_2 {
     ($type:ty) => {
         impl DissimilarityMeasure for ($type, $type) {
-            type Output = f64;
+            type Output = $type;
             fn j_distance(j: usize, this: &Self, that: &Self) -> Self::Output {
                 if j % 2 == 0 {
                     let diff = this.0 - that.0;
-                    (diff * diff) as f64
+                    diff * diff
                 } else {
                     let diff = this.1 - that.1;
-                    (diff * diff) as f64
+                    diff * diff
                 }
             }
             fn dissimilarity(sum: &Self::Output) -> Self::Output {
-                sum.sqrt()
+                *sum
             }
         }
     };
